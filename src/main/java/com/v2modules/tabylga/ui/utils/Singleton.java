@@ -10,10 +10,10 @@ import java.time.Duration;
 public class Singleton {
     private static WebDriver driver;
 
-    // Закрытый конструктор для предотвращения создания экземпляра
+    // Закрытый конструктор для предотвращения создания экземпляров
     private Singleton() {}
 
-    // Синхронный метод получение драйвера
+    // Синхронный метод получения драйвера
     public static synchronized WebDriver getDriver() {
         if (driver == null) {
             setupChromeDriver();
@@ -22,28 +22,24 @@ public class Singleton {
         return driver;
     }
 
-    // Настройка ChromeDriver через WebDriverManager
     private static void setupChromeDriver() {
-        // Используем WebDriverManager для загрузки последней подходящей версии ChromeDriver.
-        // Если необходима конкретная версия, можно указать через:
-        // WebDriverManager.chromedriver().driverVersion("135.0.7049.114").setup();
+        // Автоматическая установка нужной версии ChromeDriver
         WebDriverManager.chromedriver().setup();
 
+        // Настройка опций для Chrome
         ChromeOptions options = new ChromeOptions();
-        options.addArguments(
-                "--start-maximized",
-                "--no-sandbox",
-                "--disable-dev-shm-usage",
-                "--remote-allow-origins=*"
-        );
-
-        // Если требуется запуск в headless-режиме, раскомментируйте следующую строку:
-        // options.addArguments("--headless=new");
+        // Режим без окна браузера (headless)
+        options.addArguments("--headless=new");
+        // Другие параметры для стабильной работы, особенно в CI
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--window-size=1920,1080");
+        options.addArguments("--remote-allow-origins=*");
 
         driver = new ChromeDriver(options);
     }
 
-    // Настройка таймаутов драйвера
     private static void configureDriver() {
         if (driver != null) {
             driver.manage().timeouts()
