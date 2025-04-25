@@ -2,10 +2,17 @@ package com.v2modules.tabylga.ui.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class LoginPage {
     private final WebDriver driver;
+    private final WebDriverWait wait;
 
+    // Локаторы
     private final By loginPageButton = By.xpath("//button[contains(text(),'Войти/Зарегистрироваться')]");
     private final By usernameField = By.xpath("//input[@name='login']");
     private final By passwordField = By.xpath("//input[@name='password']");
@@ -19,33 +26,62 @@ public class LoginPage {
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
+        // Инициализируем явное ожидание с таймаутом в 15 секунд
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+    }
+
+    // Утилитный метод для ожидания видимости элемента
+    private WebElement waitForVisibility(By locator) {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+    }
+
+    // Утилитный метод для ожидания кликабельности элемента
+    private WebElement waitForClickable(By locator) {
+        return wait.until(ExpectedConditions.elementToBeClickable(locator));
     }
 
     public void clickLoginPageButton() {
-        driver.findElement(loginPageButton).click();
+        System.out.println("Нажатие кнопки 'Войти/Зарегистрироваться'...");
+        waitForClickable(loginPageButton).click();
     }
 
     public void enterUsername(String username) {
-        driver.findElement(usernameField).sendKeys(username);
+        System.out.println("Ввод имени пользователя: " + username);
+        waitForVisibility(usernameField).sendKeys(username);
     }
 
     public void enterPassword(String password) {
-        driver.findElement(passwordField).sendKeys(password);
+        System.out.println("Ввод пароля.");
+        waitForVisibility(passwordField).sendKeys(password);
     }
 
     public void clickLoginButton() {
-        driver.findElement(loginButton).click();
+        System.out.println("Нажатие кнопки входа...");
+        waitForClickable(loginButton).click();
     }
 
+    // Метод проверки отображения ошибки с ожиданием ее появления
     public boolean isErrorMessageDisplayed(By locator) {
-        return !driver.findElements(locator).isEmpty() && driver.findElement(locator).isDisplayed();
+        try {
+            WebElement errorElement = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            return errorElement.isDisplayed();
+        } catch (Exception e) {
+            System.out.println("Элемент с локатором " + locator.toString() + " не найден или не виден.");
+            return false;
+        }
     }
 
+    // Метод получения текста ошибки с ожиданием её видимости
     public String getErrorMessage(By locator) {
-        return isErrorMessageDisplayed(locator) ? driver.findElement(locator).getText() : "";
+        try {
+            return waitForVisibility(locator).getText();
+        } catch (Exception e) {
+            System.out.println("Не удалось получить текст для локатора " + locator.toString() + ". Ошибка: " + e.getMessage());
+            return "";
+        }
     }
 
-    // Методы получения текста ошибок
+    // Методы получения текста конкретных сообщений об ошибках
     public String getErrorMessageEmpty() {
         return getErrorMessage(errorMessageEmpty);
     }
