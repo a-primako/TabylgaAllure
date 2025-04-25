@@ -24,12 +24,9 @@ public class LoginTest {
     @Test
     @DisplayName("Проверка ошибки при пустых учетных данных")
     public void testEmptyCredentials() {
-        // Переход на форму входа
         loginPage.clickLoginPageButton();
-        // Нажатие кнопки логина без ввода данных
         loginPage.clickLoginButton();
 
-        // Получаем текст ошибки, ожидаем "Поле обязательно для заполнения"
         String actualMessage = loginPage.getErrorMessageEmpty();
         String expectedMessage = "Поле обязательно для заполнения";
         System.out.println("Полученное сообщение: " + actualMessage);
@@ -58,7 +55,7 @@ public class LoginTest {
     @DisplayName("Проверка ошибки при неверном формате email")
     public void testLoginWithInvalidLoginEmail() {
         loginPage.clickLoginPageButton();
-        loginPage.enterUsername("test"); // Здесь ввод некорректного email
+        loginPage.enterUsername("test");
         loginPage.enterPassword("invalid_password");
         loginPage.clickLoginButton();
 
@@ -75,7 +72,7 @@ public class LoginTest {
     public void testLoginWithInvalidPassword() {
         loginPage.clickLoginPageButton();
         loginPage.enterUsername("996555444444");
-        loginPage.enterPassword("inv"); // Слишком короткий пароль
+        loginPage.enterPassword("inv");
         loginPage.clickLoginButton();
 
         String actualMessage = loginPage.getErrorMessagePassword();

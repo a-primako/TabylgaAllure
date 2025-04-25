@@ -9,10 +9,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class LoginPage {
+    private final WebDriver driver;
     private final WebDriverWait wait;
 
-    // Локаторы
-    private final By loginPageButton = By.xpath("//button[contains(text(),'Войти/Зарегистрироваться')]");
+    // Обновлённый локатор с использованием Unicode-эскейпов для русских символов "Войти/Зарегистрироваться"
+    private final By loginPageButton = By.xpath("//button[contains(text(),'\u0412\u043E\u0439\u0442\u0438/\u0417\u0430\u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0438\u0440\u043E\u0432\u0430\u0442\u044C\u0441\u044F')]");
     private final By usernameField = By.xpath("//input[@name='login']");
     private final By passwordField = By.xpath("//input[@name='password']");
     private final By loginButton = By.xpath("//button[contains(@class, 'MuiButton-containedPrimary')]");
@@ -24,16 +25,15 @@ public class LoginPage {
     private final By errorMessageInvalidAccountCredentials = By.xpath("//div[contains(@class, 'MuiAlert-message') and text()='Invalid account credentials']");
 
     public LoginPage(WebDriver driver) {
-        // Инициализируем явное ожидание с таймаутом в 15 секунд
+        this.driver = driver;
+        // Устанавливаем время ожидания в 15 секунд
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
     }
 
-    // Утилитный метод для ожидания видимости элемента
     private WebElement waitForVisibility(By locator) {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
-    // Утилитный метод для ожидания кликабельности элемента
     private WebElement waitForClickable(By locator) {
         return wait.until(ExpectedConditions.elementToBeClickable(locator));
     }
@@ -54,22 +54,11 @@ public class LoginPage {
     }
 
     public void clickLoginButton() {
-        System.out.println("Нажатие кнопки входа...");
+        System.out.println("Нажатие кнопки 'Войти'...");
         waitForClickable(loginButton).click();
     }
 
-    // Метод проверки отображения ошибки с ожиданием ее появления
-    public boolean isErrorMessageDisplayed(By locator) {
-        try {
-            WebElement errorElement = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-            return errorElement.isDisplayed();
-        } catch (Exception e) {
-            System.out.println("Элемент с локатором " + locator.toString() + " не найден или не виден.");
-            return false;
-        }
-    }
-
-    // Метод получения текста ошибки с ожиданием её видимости
+    // Утилитный метод для получения текста ошибки
     public String getErrorMessage(By locator) {
         try {
             return waitForVisibility(locator).getText();
@@ -79,7 +68,7 @@ public class LoginPage {
         }
     }
 
-    // Методы получения текста конкретных сообщений об ошибках
+    // Методы получения сообщений об ошибках
     public String getErrorMessageEmpty() {
         return getErrorMessage(errorMessageEmpty);
     }
