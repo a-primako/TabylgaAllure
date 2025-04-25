@@ -20,8 +20,11 @@ public class ResponseValidator {
         List<Map<String, Object>> categories = response.jsonPath().getList("data.getCategories");
         System.out.println("Categories Count: " + categories.size());
 
-        // Проверка общего количества категорий
-        assertEquals(1608, categories.size(), "Ожидалось 1608 категорий, но получено " + categories.size());
+        // Проверка общего количества категорий.
+        // Поскольку категории постоянно добавляются, используем минимальное ожидаемое значение.
+        int minimumExpectedCategories = 1608;
+        assertTrue(categories.size() >= minimumExpectedCategories,
+                "Ожидалось минимум " + minimumExpectedCategories + " категорий, но получено " + categories.size());
         assertFalse(categories.isEmpty(), "Список Категорий пуст");
 
         // Проверка первой категории
@@ -29,8 +32,17 @@ public class ResponseValidator {
         System.out.println("First Category ID: " + firstCategory.get("id"));
         System.out.println("First Category Name: " + firstCategory.get("name"));
 
-        assertNotNull(firstCategory.get("id"));
-        assertNotNull(firstCategory.get("name"));
+        assertNotNull(firstCategory.get("id"), "ID первой категории не должен быть null");
+        assertNotNull(firstCategory.get("name"), "Название первой категории не должно быть null");
+
+        // Проверка и вывод последней найденной категории
+        Map<String, Object> lastCategory = categories.get(categories.size() - 1);
+        System.out.println("Last Category ID: " + lastCategory.get("id"));
+        System.out.println("Last Category Name: " + lastCategory.get("name"));
+
+        assertNotNull(lastCategory.get("id"), "ID последней категории не должен быть null");
+        assertNotNull(lastCategory.get("name"), "Название последней категории не должно быть null");
+
 
         // Проверка вложенной структуры icon
         Map<String, Object> icon = (Map<String, Object>) firstCategory.get("icon");
