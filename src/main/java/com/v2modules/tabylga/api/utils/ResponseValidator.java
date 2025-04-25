@@ -1,142 +1,163 @@
 package com.v2modules.tabylga.api.utils;
 
 import io.restassured.response.Response;
-
+import io.qameta.allure.Allure;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ResponseValidator {
 
     public static void validateStatusCode(Response response) {
-        int statusCode = response.getStatusCode();
-        System.out.println("HTTP Status Code: " + statusCode);
-        assertEquals(200, statusCode, "Некорректный статус-код!");
+        Allure.step("Проверка HTTP статус-кода", () -> {
+            int statusCode = response.getStatusCode();
+            String message = "HTTP Status Code: " + statusCode;
+            System.out.println(message);
+            Allure.addAttachment("HTTP статус-код", "text/plain", String.valueOf(statusCode));
+            assertEquals(200, statusCode, "Некорректный статус-код!");
+        });
     }
 
-    //В дальнейшем нужно проверить сравнение из БД по количеству категорий
     public static void validateCategories(Response response) {
-        List<Map<String, Object>> categories = response.jsonPath().getList("data.getCategories");
-        System.out.println("Categories Count: " + categories.size());
+        Allure.step("Проверка категорий", () -> {
+            List<Map<String, Object>> categories = response.jsonPath().getList("data.getCategories");
+            String countMessage = "Categories Count: " + categories.size();
+            System.out.println(countMessage);
+            Allure.addAttachment("Количество категорий", "text/plain", String.valueOf(categories.size()));
 
-        // Проверка общего количества категорий.
-        // Поскольку категории постоянно добавляются, используем минимальное ожидаемое значение.
-        int minimumExpectedCategories = 1608;
-        assertTrue(categories.size() >= minimumExpectedCategories,
-                "Ожидалось минимум " + minimumExpectedCategories + " категорий, но получено " + categories.size());
-        assertFalse(categories.isEmpty(), "Список Категорий пуст");
+            int minimumExpectedCategories = 1608;
+            assertTrue(categories.size() >= minimumExpectedCategories,
+                    "Ожидалось минимум " + minimumExpectedCategories + " категорий, но получено " + categories.size());
+            assertFalse(categories.isEmpty(), "Список Категорий пуст");
 
-        // Проверка первой категории
-        Map<String, Object> firstCategory = categories.get(0);
-        System.out.println("First Category ID: " + firstCategory.get("id"));
-        System.out.println("First Category Name: " + firstCategory.get("name"));
+            // Проверка первой категории
+            Map<String, Object> firstCategory = categories.get(0);
+            String firstCategoryInfo = "First Category ID: " + firstCategory.get("id") + "\nFirst Category Name: " + firstCategory.get("name");
+            System.out.println(firstCategoryInfo);
+            Allure.addAttachment("Первая категория", "text/plain", firstCategoryInfo);
+            assertNotNull(firstCategory.get("id"), "ID первой категории не должен быть null");
+            assertNotNull(firstCategory.get("name"), "Название первой категории не должно быть null");
 
-        assertNotNull(firstCategory.get("id"), "ID первой категории не должен быть null");
-        assertNotNull(firstCategory.get("name"), "Название первой категории не должно быть null");
+            // Проверка последней категории
+            Map<String, Object> lastCategory = categories.get(categories.size() - 1);
+            String lastCategoryInfo = "Last Category ID: " + lastCategory.get("id") + "\nLast Category Name: " + lastCategory.get("name");
+            System.out.println(lastCategoryInfo);
+            Allure.addAttachment("Последняя категория", "text/plain", lastCategoryInfo);
+            assertNotNull(lastCategory.get("id"), "ID последней категории не должен быть null");
+            assertNotNull(lastCategory.get("name"), "Название последней категории не должно быть null");
 
-        // Проверка и вывод последней найденной категории
-        Map<String, Object> lastCategory = categories.get(categories.size() - 1);
-        System.out.println("Last Category ID: " + lastCategory.get("id"));
-        System.out.println("Last Category Name: " + lastCategory.get("name"));
-
-        assertNotNull(lastCategory.get("id"), "ID последней категории не должен быть null");
-        assertNotNull(lastCategory.get("name"), "Название последней категории не должно быть null");
-
-
-        // Проверка вложенной структуры icon
-        Map<String, Object> icon = (Map<String, Object>) firstCategory.get("icon");
-        if (icon != null) {
-            System.out.println("Icon URL: " + icon.get("url"));
-            assertNotNull(icon.get("url"));
-        }
+            // Проверка вложенной структуры icon (если присутствует)
+            Map<String, Object> icon = (Map<String, Object>) firstCategory.get("icon");
+            if (icon != null) {
+                String iconInfo = "Icon URL: " + icon.get("url");
+                System.out.println(iconInfo);
+                Allure.addAttachment("Иконка", "text/plain", iconInfo);
+                assertNotNull(icon.get("url"), "URL иконки не должен быть null");
+            }
+        });
     }
 
-//В дальнейшем нужно проверить сравнение из БД по количеству страниц бизнес-профилей
     public static void validateBusinessProfiles(Response response) {
-        Map<String, Object> businessProfiles = response.jsonPath().getMap("data.getBusinessProfilesList");
-        System.out.println("Total Business Profiles: " + businessProfiles.get("totalItems"));
-        System.out.println("Total Pages: " + businessProfiles.get("totalPages"));
-
-        assertTrue((Integer) businessProfiles.get("totalItems") > 0);
-        assertTrue((Integer) businessProfiles.get("totalPages") > 0);
+        Allure.step("Проверка бизнес-профилей", () -> {
+            Map<String, Object> businessProfiles = response.jsonPath().getMap("data.getBusinessProfilesList");
+            String bpInfo = "Total Business Profiles: " + businessProfiles.get("totalItems") +
+                    "\nTotal Pages: " + businessProfiles.get("totalPages");
+            System.out.println(bpInfo);
+            Allure.addAttachment("Бизнес-профили", "text/plain", bpInfo);
+            assertTrue((Integer) businessProfiles.get("totalItems") > 0, "Количество бизнес-профилей должно быть больше 0");
+            assertTrue((Integer) businessProfiles.get("totalPages") > 0, "Количество страниц должно быть больше 0");
+        });
     }
 
     public static void validateCurrencies(Response response) {
-        List<Map<String, Object>> currencies = response.jsonPath().getList("data.getCurrencies");
-        System.out.println("Currencies Count: " + currencies.size());
-        assertFalse(currencies.isEmpty(), "Список валют пуст");
+        Allure.step("Проверка валют", () -> {
+            List<Map<String, Object>> currencies = response.jsonPath().getList("data.getCurrencies");
+            String countMessage = "Currencies Count: " + currencies.size();
+            System.out.println(countMessage);
+            Allure.addAttachment("Количество валют", "text/plain", String.valueOf(currencies.size()));
+            assertFalse(currencies.isEmpty(), "Список валют пуст");
 
-        // Проверка первой валюты (USD)
-        Map<String, Object> firstCurrency = currencies.get(0);
-        System.out.println("First Currency ID: " + firstCurrency.get("id"));
-        System.out.println("First Currency Code: " + firstCurrency.get("code"));
-        System.out.println("First Currency Name: " + firstCurrency.get("name"));
-        System.out.println("Is Main Currency: " + firstCurrency.get("isMain"));
+            // Проверка первой валюты (USD)
+            Map<String, Object> firstCurrency = currencies.get(0);
+            String firstCurrencyInfo = "First Currency ID: " + firstCurrency.get("id") +
+                    "\nFirst Currency Code: " + firstCurrency.get("code") +
+                    "\nFirst Currency Name: " + firstCurrency.get("name") +
+                    "\nIs Main Currency: " + firstCurrency.get("isMain");
+            System.out.println(firstCurrencyInfo);
+            Allure.addAttachment("Первая валюта", "text/plain", firstCurrencyInfo);
+            assertEquals("usd", firstCurrency.get("id"), "Неверное значение ID первой валюты");
+            assertEquals("usd", firstCurrency.get("code"), "Неверное значение кода первой валюты");
+            assertEquals("USD", firstCurrency.get("name"), "Неверное значение названия первой валюты");
+            assertEquals(false, firstCurrency.get("isMain"), "Неверное значение isMain первой валюты");
 
-        assertEquals("usd", firstCurrency.get("id"));
-        assertEquals("usd", firstCurrency.get("code"));
-        assertEquals("USD", firstCurrency.get("name"));
-        assertEquals(false, firstCurrency.get("isMain"));
+            // Проверка второй валюты (EUR)
+            Map<String, Object> secondCurrency = currencies.get(1);
+            String secondCurrencyInfo = "Second Currency ID: " + secondCurrency.get("id") +
+                    "\nSecond Currency Code: " + secondCurrency.get("code") +
+                    "\nSecond Currency Name: " + secondCurrency.get("name") +
+                    "\nIs Main Currency: " + secondCurrency.get("isMain");
+            System.out.println(secondCurrencyInfo);
+            Allure.addAttachment("Вторая валюта", "text/plain", secondCurrencyInfo);
+            assertEquals("eur", secondCurrency.get("id"), "Неверное значение ID второй валюты");
+            assertEquals("eur", secondCurrency.get("code"), "Неверное значение кода второй валюты");
+            assertEquals("EUR", secondCurrency.get("name"), "Неверное значение названия второй валюты");
+            assertEquals(false, secondCurrency.get("isMain"), "Неверное значение isMain второй валюты");
 
-        // Проверка второй валюты (EUR)
-        Map<String, Object> secondCurrency = currencies.get(1);
-        System.out.println("Second Currency ID: " + secondCurrency.get("id"));
-        System.out.println("Second Currency Code: " + secondCurrency.get("code"));
-        System.out.println("Second Currency Name: " + secondCurrency.get("name"));
-        System.out.println("Is Main Currency: " + secondCurrency.get("isMain"));
+            // Проверка третьей валюты (KGS)
+            Map<String, Object> thirdCurrency = currencies.get(2);
+            String thirdCurrencyInfo = "Third Currency ID: " + thirdCurrency.get("id") +
+                    "\nThird Currency Code: " + thirdCurrency.get("code") +
+                    "\nThird Currency Name: " + thirdCurrency.get("name") +
+                    "\nIs Main Currency: " + thirdCurrency.get("isMain");
+            System.out.println(thirdCurrencyInfo);
+            Allure.addAttachment("Третья валюта", "text/plain", thirdCurrencyInfo);
+            assertEquals("kgs", thirdCurrency.get("id"), "Неверное значение ID третьей валюты");
+            assertEquals("kgs", thirdCurrency.get("code"), "Неверное значение кода третьей валюты");
+            assertEquals("KGS", thirdCurrency.get("name"), "Неверное значение названия третьей валюты");
+            assertEquals(true, thirdCurrency.get("isMain"), "Неверное значение isMain третьей валюты");
 
-        assertEquals("eur", secondCurrency.get("id"));
-        assertEquals("eur", secondCurrency.get("code"));
-        assertEquals("EUR", secondCurrency.get("name"));
-        assertEquals(false, secondCurrency.get("isMain"));
-
-        // Проверка третьей валюты (KGS)
-        Map<String, Object> thirdCurrency = currencies.get(2);
-        System.out.println("Third Currency ID: " + thirdCurrency.get("id"));
-        System.out.println("Third Currency Code: " + thirdCurrency.get("code"));
-        System.out.println("Third Currency Name: " + thirdCurrency.get("name"));
-        System.out.println("Is Main Currency: " + thirdCurrency.get("isMain"));
-
-        assertEquals("kgs", thirdCurrency.get("id"));
-        assertEquals("kgs", thirdCurrency.get("code"));
-        assertEquals("KGS", thirdCurrency.get("name"));
-        assertEquals(true, thirdCurrency.get("isMain"));
-
-        // Проверка общего количества валют
-        assertEquals(3, currencies.size(), "Ожидалось 3 валюты, но получено " + currencies.size());
+            // Проверка общего количества валют
+            assertEquals(3, currencies.size(), "Ожидалось 3 валюты, но получено " + currencies.size());
+        });
     }
 
     public static void validateLanguages(Response response) {
-        List<Map<String, Object>> languages = response.jsonPath().getList("data.getLanguages");
-        System.out.println("Languages Count: " + languages.size());
-        assertFalse(languages.isEmpty(), "Список языков пуст");
+        Allure.step("Проверка языков", () -> {
+            List<Map<String, Object>> languages = response.jsonPath().getList("data.getLanguages");
+            String countMessage = "Languages Count: " + languages.size();
+            System.out.println(countMessage);
+            Allure.addAttachment("Количество языков", "text/plain", String.valueOf(languages.size()));
+            assertFalse(languages.isEmpty(), "Список языков пуст");
 
-        // Проверка первого языка (Русский)
-        Map<String, Object> firstLanguage = languages.get(0);
-        System.out.println("First Language ID: " + firstLanguage.get("id"));
-        System.out.println("First Language Name: " + firstLanguage.get("name"));
+            // Проверка первого языка (Русский)
+            Map<String, Object> firstLanguage = languages.get(0);
+            String firstLanguageInfo = "First Language ID: " + firstLanguage.get("id") +
+                    "\nFirst Language Name: " + firstLanguage.get("name");
+            System.out.println(firstLanguageInfo);
+            Allure.addAttachment("Первый язык", "text/plain", firstLanguageInfo);
+            assertEquals("ru", firstLanguage.get("id"), "Неверное значение ID первого языка");
+            assertEquals("Русский", firstLanguage.get("name"), "Неверное значение названия первого языка");
 
-        assertEquals("ru", firstLanguage.get("id"));
-        assertEquals("Русский", firstLanguage.get("name"));
+            // Проверка второго языка (Кыргызский)
+            Map<String, Object> secondLanguage = languages.get(1);
+            String secondLanguageInfo = "Second Language ID: " + secondLanguage.get("id") +
+                    "\nSecond Language Name: " + secondLanguage.get("name");
+            System.out.println(secondLanguageInfo);
+            Allure.addAttachment("Второй язык", "text/plain", secondLanguageInfo);
+            assertEquals("ky", secondLanguage.get("id"), "Неверное значение ID второго языка");
+            assertEquals("Кыргыз тили", secondLanguage.get("name"), "Неверное значение названия второго языка");
 
-        // Проверка второго языка (Кыргызский)
-        Map<String, Object> secondLanguage = languages.get(1);
-        System.out.println("Second Language ID: " + secondLanguage.get("id"));
-        System.out.println("Second Language Name: " + secondLanguage.get("name"));
+            // Проверка третьего языка (Английский)
+            Map<String, Object> thirdLanguage = languages.get(2);
+            String thirdLanguageInfo = "Third Language ID: " + thirdLanguage.get("id") +
+                    "\nThird Language Name: " + thirdLanguage.get("name");
+            System.out.println(thirdLanguageInfo);
+            Allure.addAttachment("Третий язык", "text/plain", thirdLanguageInfo);
+            assertEquals("en", thirdLanguage.get("id"), "Неверное значение ID третьего языка");
+            assertEquals("English", thirdLanguage.get("name"), "Неверное значение названия третьего языка");
 
-        assertEquals("ky", secondLanguage.get("id"));
-        assertEquals("Кыргыз тили", secondLanguage.get("name"));
-
-        // Проверка третьего языка (Английский)
-        Map<String, Object> thirdLanguage = languages.get(2);
-        System.out.println("Third Language ID: " + thirdLanguage.get("id"));
-        System.out.println("Third Language Name: " + thirdLanguage.get("name"));
-
-        assertEquals("en", thirdLanguage.get("id"));
-        assertEquals("English", thirdLanguage.get("name"));
-
-        // Проверка общего количества языков
-        assertEquals(3, languages.size(), "Ожидалось 3 языка, но получено " + languages.size());
+            // Проверка общего количества языков
+            assertEquals(3, languages.size(), "Ожидалось 3 языка, но получено " + languages.size());
+        });
     }
 }

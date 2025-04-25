@@ -2,6 +2,7 @@ package com.v2modules.tabylga.ui;
 
 import com.v2modules.tabylga.ui.pages.LoginPage;
 import com.v2modules.tabylga.ui.utils.Singleton;
+import io.qameta.allure.Allure;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,8 +18,12 @@ public class LoginTest {
     @BeforeEach
     public void setUp() {
         driver = Singleton.getDriver();
-        driver.get("https://tabylga.app/");
+        String url = "https://tabylga.app/";
+        driver.get(url);
         loginPage = new LoginPage(driver);
+        String info = "Открытый URL: " + driver.getCurrentUrl();
+        System.out.println(info);
+        Allure.addAttachment("Открытый URL", "text/plain", info);
     }
 
     @Test
@@ -31,6 +36,8 @@ public class LoginTest {
         String expectedMessage = "Поле обязательно для заполнения";
         System.out.println("Полученное сообщение: " + actualMessage);
         System.out.println("Ожидаемое сообщение: " + expectedMessage);
+        Allure.addAttachment("Полученное сообщение", "text/plain", actualMessage);
+        Allure.addAttachment("Ожидаемое сообщение", "text/plain", expectedMessage);
 
         assertEquals(expectedMessage, actualMessage, "Сообщение не соответствует ожидаемому");
     }
@@ -47,6 +54,8 @@ public class LoginTest {
         String expectedMessage = "Телефон в формате:996000000000";
         System.out.println("Полученное сообщение: " + actualMessage);
         System.out.println("Ожидаемое сообщение: " + expectedMessage);
+        Allure.addAttachment("Полученное сообщение", "text/plain", actualMessage);
+        Allure.addAttachment("Ожидаемое сообщение", "text/plain", expectedMessage);
 
         assertEquals(expectedMessage, actualMessage, "Сообщение не соответствует ожидаемому");
     }
@@ -63,6 +72,8 @@ public class LoginTest {
         String expectedMessage = "Поле должно быть действительным адресом электронной почты.";
         System.out.println("Полученное сообщение: " + actualMessage);
         System.out.println("Ожидаемое сообщение: " + expectedMessage);
+        Allure.addAttachment("Полученное сообщение", "text/plain", actualMessage);
+        Allure.addAttachment("Ожидаемое сообщение", "text/plain", expectedMessage);
 
         assertEquals(expectedMessage, actualMessage, "Сообщение не соответствует ожидаемому");
     }
@@ -79,6 +90,8 @@ public class LoginTest {
         String expectedMessage = "Слишком коротко (минимум 5 символов)";
         System.out.println("Полученное сообщение: " + actualMessage);
         System.out.println("Ожидаемое сообщение: " + expectedMessage);
+        Allure.addAttachment("Полученное сообщение", "text/plain", actualMessage);
+        Allure.addAttachment("Ожидаемое сообщение", "text/plain", expectedMessage);
 
         assertEquals(expectedMessage, actualMessage, "Сообщение не соответствует ожидаемому");
     }
@@ -95,6 +108,8 @@ public class LoginTest {
         String expectedMessage = "Account not found.";
         System.out.println("Полученное сообщение: " + actualMessage);
         System.out.println("Ожидаемое сообщение: " + expectedMessage);
+        Allure.addAttachment("Полученное сообщение", "text/plain", actualMessage);
+        Allure.addAttachment("Ожидаемое сообщение", "text/plain", expectedMessage);
 
         assertEquals(expectedMessage, actualMessage, "Сообщение не соответствует ожидаемому");
     }
@@ -111,6 +126,8 @@ public class LoginTest {
         String expectedMessage = "Invalid account credentials";
         System.out.println("Полученное сообщение: " + actualMessage);
         System.out.println("Ожидаемое сообщение: " + expectedMessage);
+        Allure.addAttachment("Полученное сообщение", "text/plain", actualMessage);
+        Allure.addAttachment("Ожидаемое сообщение", "text/plain", expectedMessage);
 
         assertEquals(expectedMessage, actualMessage, "Сообщение не соответствует ожидаемому");
     }

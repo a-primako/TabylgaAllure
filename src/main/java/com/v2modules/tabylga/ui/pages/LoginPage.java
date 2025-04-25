@@ -1,5 +1,6 @@
 package com.v2modules.tabylga.ui.pages;
 
+import io.qameta.allure.Allure;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,7 +13,7 @@ public class LoginPage {
     private final WebDriver driver;
     private final WebDriverWait wait;
 
-    // Обновлённый локатор с использованием Unicode-эскейпов для русских символов "Войти/Зарегистрироваться"
+    // Локаторы. Для кнопки используем Unicode-эскейпы, чтобы избежать проблем с кодировкой:
     private final By loginPageButton = By.xpath("//button[contains(text(),'\u0412\u043E\u0439\u0442\u0438/\u0417\u0430\u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0438\u0440\u043E\u0432\u0430\u0442\u044C\u0441\u044F')]");
     private final By usernameField = By.xpath("//input[@name='login']");
     private final By passwordField = By.xpath("//input[@name='password']");
@@ -26,49 +27,81 @@ public class LoginPage {
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
-        // Устанавливаем время ожидания в 15 секунд
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
     }
 
+    // Ожидание видимости элемента
     private WebElement waitForVisibility(By locator) {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
+    // Ожидание, когда элемент будет кликабельным
     private WebElement waitForClickable(By locator) {
         return wait.until(ExpectedConditions.elementToBeClickable(locator));
     }
 
     public void clickLoginPageButton() {
-        System.out.println("Нажатие кнопки 'Войти/Зарегистрироваться'...");
-        waitForClickable(loginPageButton).click();
+        String stepName = "Нажатие кнопки 'Войти/Зарегистрироваться'";
+        System.out.println(stepName);
+        Allure.step(stepName, () -> {
+            WebElement element = waitForClickable(loginPageButton);
+            String buttonText = element.getText();
+            System.out.println("Текст кнопки: " + buttonText);
+            Allure.addAttachment("Текст кнопки", "text/plain", buttonText);
+            element.click();
+        });
     }
 
     public void enterUsername(String username) {
-        System.out.println("Ввод имени пользователя: " + username);
-        waitForVisibility(usernameField).sendKeys(username);
+        String stepName = "Ввод имени пользователя: " + username;
+        System.out.println(stepName);
+        Allure.step(stepName, () -> {
+            WebElement input = waitForVisibility(usernameField);
+            input.sendKeys(username);
+            Allure.addAttachment("Введенное имя пользователя", "text/plain", username);
+        });
     }
 
     public void enterPassword(String password) {
-        System.out.println("Ввод пароля.");
-        waitForVisibility(passwordField).sendKeys(password);
+        String stepName = "Ввод пароля";
+        System.out.println(stepName);
+        Allure.step(stepName, () -> {
+            WebElement input = waitForVisibility(passwordField);
+            input.sendKeys(password);
+            Allure.addAttachment("Введенный пароль", "text/plain", password);
+        });
     }
 
     public void clickLoginButton() {
-        System.out.println("Нажатие кнопки 'Войти'...");
-        waitForClickable(loginButton).click();
+        String stepName = "Нажатие кнопки 'Войти'";
+        System.out.println(stepName);
+        Allure.step(stepName, () -> {
+            WebElement element = waitForClickable(loginButton);
+            String buttonText = element.getText();
+            System.out.println("Текст кнопки: " + buttonText);
+            Allure.addAttachment("Текст кнопки", "text/plain", buttonText);
+            element.click();
+        });
     }
 
-    // Утилитный метод для получения текста ошибки
     public String getErrorMessage(By locator) {
-        try {
-            return waitForVisibility(locator).getText();
-        } catch (Exception e) {
-            System.out.println("Не удалось получить текст для локатора " + locator.toString() + ". Ошибка: " + e.getMessage());
-            return "";
-        }
+        String stepName = "Получение текста ошибки для локатора: " + locator.toString();
+        System.out.println(stepName);
+        return Allure.step(stepName, () -> {
+            try {
+                String errorText = waitForVisibility(locator).getText();
+                System.out.println("Текст ошибки: " + errorText);
+                Allure.addAttachment("Текст ошибки", "text/plain", errorText);
+                return errorText;
+            } catch (Exception e) {
+                String errorInfo = "Ошибка получения текста: " + e.getMessage();
+                System.out.println(errorInfo);
+                Allure.addAttachment("Ошибка", "text/plain", errorInfo);
+                return "";
+            }
+        });
     }
 
-    // Методы получения сообщений об ошибках
     public String getErrorMessageEmpty() {
         return getErrorMessage(errorMessageEmpty);
     }
