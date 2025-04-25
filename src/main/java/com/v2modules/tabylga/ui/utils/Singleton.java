@@ -10,29 +10,24 @@ import java.time.Duration;
 public class Singleton {
     private static WebDriver driver;
 
-    private Singleton() {
-    }
+    // Закрытый конструктор для предотвращения создания экземпляра
+    private Singleton() {}
 
+    // Синхронный метод получение драйвера
     public static synchronized WebDriver getDriver() {
         if (driver == null) {
-            try {
-                setupChromeDriver();
-                configureDriver();
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to initialize WebDriver", e);
-            }
+            setupChromeDriver();
+            configureDriver();
         }
         return driver;
     }
 
+    // Настройка ChromeDriver через WebDriverManager
     private static void setupChromeDriver() {
-        // Указываем путь к ChromeDriver вручную
-        System.setProperty("webdriver.chrome.driver", "C:\\jenkins\\webdriver_cache\\chromedriver\\win64\\135.0.7049.84\\chromedriver.exe");
-
-        WebDriverManager.chromedriver()
-                .forceDownload()
-                .avoidBrowserDetection()
-                .setup();
+        // Используем WebDriverManager для загрузки последней подходящей версии ChromeDriver.
+        // Если необходима конкретная версия, можно указать через:
+        // WebDriverManager.chromedriver().driverVersion("135.0.7049.114").setup();
+        WebDriverManager.chromedriver().setup();
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments(
@@ -42,9 +37,13 @@ public class Singleton {
                 "--remote-allow-origins=*"
         );
 
+        // Если требуется запуск в headless-режиме, раскомментируйте следующую строку:
+        // options.addArguments("--headless=new");
+
         driver = new ChromeDriver(options);
     }
 
+    // Настройка таймаутов драйвера
     private static void configureDriver() {
         if (driver != null) {
             driver.manage().timeouts()
@@ -53,6 +52,7 @@ public class Singleton {
         }
     }
 
+    // Синхронный метод закрытия драйвера
     public static synchronized void quitDriver() {
         if (driver != null) {
             driver.quit();
