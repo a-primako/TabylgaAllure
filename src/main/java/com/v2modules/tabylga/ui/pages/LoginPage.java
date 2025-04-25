@@ -1,68 +1,51 @@
 package com.v2modules.tabylga.ui.pages;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 
 public class LoginPage {
-    // Элементы страницы с аннотациями @FindBy
-    @FindBy(xpath = "//button[contains(text(),'Войти/Зарегистрироваться')]")
-    private WebElement loginPageButton;
-    @FindBy(xpath = "//input[@name='login']")
-    private WebElement usernameField;
-    @FindBy(xpath = "//input[@name='password']")
-    private WebElement passwordField;
-    @FindBy(xpath = "//button[contains(@class, 'MuiButton-containedPrimary')]")
-    private WebElement loginButton;
-    @FindBy(xpath = "//p[contains(text(),'Поле обязательно для заполнения')]")
-    private WebElement errorMessageEmpty;
-    @FindBy(xpath = "//p[contains(text(),'Телефон в формате:996000000000')]")
-    private WebElement errorMessageLoginPhoneNumber;
-    @FindBy(xpath = "//p[contains(text(),'Поле должно быть действительным адресом электронной почты.')]")
-    private WebElement errorMessageLoginEmail;
-    @FindBy(xpath = "//p[contains(text(),'Слишком коротко (минимум 5 символов)')]")
-    private WebElement errorMessagePassword;
-    @FindBy(xpath = "//div[contains(@class, 'MuiAlert-message') and contains(text(), 'Account not found.')]")
-    private WebElement errorMessageAccountNotFound;
-    @FindBy(xpath = "//div[contains(@class, 'MuiAlert-message') and text()='Invalid account credentials']")
-    private WebElement errorMessageInvalidAccountCredentials;
+    private final WebDriver driver;
+
+    private final By loginPageButton = By.xpath("//button[contains(text(),'Войти/Зарегистрироваться')]");
+    private final By usernameField = By.xpath("//input[@name='login']");
+    private final By passwordField = By.xpath("//input[@name='password']");
+    private final By loginButton = By.xpath("//button[contains(@class, 'MuiButton-containedPrimary')]");
+    private final By errorMessageEmpty = By.xpath("//p[contains(text(),'Поле обязательно для заполнения')]");
+    private final By errorMessageLoginPhoneNumber = By.xpath("//p[contains(text(),'Телефон в формате:996000000000')]");
+    private final By errorMessageLoginEmail = By.xpath("//p[contains(text(),'Поле должно быть действительным адресом электронной почты.')]");
+    private final By errorMessagePassword = By.xpath("//p[contains(text(),'Слишком коротко (минимум 5 символов)')]");
+    private final By errorMessageAccountNotFound = By.xpath("//div[contains(@class, 'MuiAlert-message') and contains(text(), 'Account not found.')]");
+    private final By errorMessageInvalidAccountCredentials = By.xpath("//div[contains(@class, 'MuiAlert-message') and text()='Invalid account credentials']");
 
     public LoginPage(WebDriver driver) {
-        PageFactory.initElements(driver, this); // Инициализация элементов
+        this.driver = driver;
     }
 
     public void clickLoginPageButton() {
-        loginPageButton.click();
+        driver.findElement(loginPageButton).click();
     }
 
     public void enterUsername(String username) {
-        usernameField.sendKeys(username);
+        driver.findElement(usernameField).sendKeys(username);
     }
 
     public void enterPassword(String password) {
-        passwordField.sendKeys(password);
+        driver.findElement(passwordField).sendKeys(password);
     }
 
     public void clickLoginButton() {
-        loginButton.click();
+        driver.findElement(loginButton).click();
     }
 
-    // Универсальный метод проверки видимости элемента
-    private boolean isElementDisplayed(WebElement element) {
-        try {
-            return element.isDisplayed();
-        } catch (org.openqa.selenium.NoSuchElementException e) {
-            return false;
-        }
+    public boolean isErrorMessageDisplayed(By locator) {
+        return !driver.findElements(locator).isEmpty() && driver.findElement(locator).isDisplayed();
     }
 
-    // Универсальный метод получения текста ошибки
-    private String getErrorMessage(WebElement errorElement) {
-        return isElementDisplayed(errorElement) ? errorElement.getText() : "";
+    public String getErrorMessage(By locator) {
+        return isErrorMessageDisplayed(locator) ? driver.findElement(locator).getText() : "";
     }
 
-    // Методы получения конкретных ошибок
+    // Методы получения текста ошибок
     public String getErrorMessageEmpty() {
         return getErrorMessage(errorMessageEmpty);
     }
