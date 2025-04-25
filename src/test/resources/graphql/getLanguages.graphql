@@ -1,0 +1,6 @@
+query GET_LANGUAGES_QUERY {
+  getLanguages {
+    id
+    name
+  }
+}

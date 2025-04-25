@@ -1,0 +1,12 @@
+query GET_CURRENCIES {
+  getCurrencies {
+    ...Currency_Fragment
+  }
+}
+
+fragment Currency_Fragment on CurrencyModel {
+  id
+  code
+  name
+  isMain
+}

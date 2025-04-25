@@ -1,0 +1,35 @@
+query GET_CATEGORIES_AND_BUSINESS_PROFILES_COUNT($where: CategoriesFilterArgs) {
+  getCategories(where: $where) {
+    ...Category_Fragment
+  }
+  getBusinessProfilesList(page: 1, perPage: 1) {
+    totalItems
+    totalPages
+  }
+}
+
+fragment Category_Fragment on CategoryModel {
+  id
+  parentId
+  name
+  depth
+  position
+  limit
+  advCount
+  hidden
+  url
+  type
+  icon {
+    url
+    name
+    width
+    height
+    blurhash
+    thumbs {
+      url
+      width
+      height
+      type
+    }
+  }
+}
