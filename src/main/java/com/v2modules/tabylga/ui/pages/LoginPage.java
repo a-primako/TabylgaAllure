@@ -9,7 +9,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class LoginPage {
-    private final WebDriver driver;
     private final WebDriverWait wait;
 
     // Локаторы
@@ -25,7 +24,6 @@ public class LoginPage {
     private final By errorMessageInvalidAccountCredentials = By.xpath("//div[contains(@class, 'MuiAlert-message') and text()='Invalid account credentials']");
 
     public LoginPage(WebDriver driver) {
-        this.driver = driver;
         // Инициализируем явное ожидание с таймаутом в 15 секунд
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
     }
