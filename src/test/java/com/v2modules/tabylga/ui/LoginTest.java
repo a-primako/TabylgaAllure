@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LoginTest {
     private WebDriver driver;
@@ -25,6 +26,36 @@ public class LoginTest {
         System.out.println(info);
         Allure.addAttachment("Открытый URL", "text/plain", info);
     }
+
+
+    @Test
+    @DisplayName("Успешный вход в систему с корректными учетными данными")
+    public void testSuccessfulLogin() {
+        loginPage.clickLoginPageButton();
+        loginPage.enterUsername("996555444444");
+        loginPage.enterPassword("password");
+        loginPage.clickLoginButton();
+
+        String expectedUrl = "https://tabylga.app/";
+        String actualUrl = driver.getCurrentUrl();
+
+        System.out.println("Ожидаемый URL: " + expectedUrl);
+        System.out.println("Фактический URL: " + actualUrl);
+
+        Allure.addAttachment("Ожидаемый URL", "text/plain", expectedUrl);
+        Allure.addAttachment("Фактический URL", "text/plain", actualUrl);
+
+        assertEquals(expectedUrl, actualUrl, "URL после входа не соответствует ожидаемому");
+
+        boolean isLoggedIn = loginPage.isUserLoggedIn();
+
+        System.out.println("Статус авторизации: " + isLoggedIn);
+        Allure.addAttachment("Статус авторизации", "text/plain", "Пользователь авторизован: " + isLoggedIn);
+
+        assertTrue(isLoggedIn, "Пользователь должен быть авторизован");
+    }
+
+
 
     @Test
     @DisplayName("Проверка ошибки при пустых учетных данных")

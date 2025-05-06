@@ -10,7 +10,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class LoginPage {
-    private final WebDriver driver;
     private final WebDriverWait wait;
 
     // Локаторы. Для кнопки используем Unicode-эскейпы, чтобы избежать проблем с кодировкой:
@@ -24,9 +23,10 @@ public class LoginPage {
     private final By errorMessagePassword = By.xpath("//p[contains(text(),'Слишком коротко (минимум 5 символов)')]");
     private final By errorMessageAccountNotFound = By.xpath("//div[contains(@class, 'MuiAlert-message') and contains(text(), 'Account not found.')]");
     private final By errorMessageInvalidAccountCredentials = By.xpath("//div[contains(@class, 'MuiAlert-message') and text()='Invalid account credentials']");
+    private final By isUserLoggedIn = By.xpath("//a[contains(@class, 'MuiLink-root') and @href='/account/wallet']");
+
 
     public LoginPage(WebDriver driver) {
-        this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
     }
 
@@ -98,6 +98,23 @@ public class LoginPage {
                 System.out.println(errorInfo);
                 Allure.addAttachment("Ошибка", "text/plain", errorInfo);
                 return "";
+            }
+        });
+    }
+
+    public boolean isUserLoggedIn() {
+        String stepName = "Проверка, вошел ли пользователь в систему";
+        System.out.println(stepName);
+        return Allure.step(stepName, () -> {
+            try {
+                boolean isLoggedIn = wait.until(ExpectedConditions.visibilityOfElementLocated(isUserLoggedIn)).isDisplayed();
+                Allure.addAttachment("Статус входа", "text/plain", "Пользователь авторизован: " + isLoggedIn);
+                return isLoggedIn;
+            } catch (Exception e) {
+                String errorInfo = "Ошибка проверки авторизации: " + e.getMessage();
+                System.out.println(errorInfo);
+                Allure.addAttachment("Ошибка", "text/plain", errorInfo);
+                return false;
             }
         });
     }
