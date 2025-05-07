@@ -1,9 +1,6 @@
 package com.v2modules.tabylga.api;
 
-import io.qameta.allure.Allure;
-import io.qameta.allure.Description;
-import io.qameta.allure.Feature;
-import io.qameta.allure.Story;
+import io.qameta.allure.*;
 import org.junit.jupiter.api.DisplayName;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
@@ -14,15 +11,17 @@ import com.v2modules.tabylga.api.utils.ResponseValidator;
 
 import java.util.Map;
 
+@Epic("GraphQL API Тесты")
 public class GetCategoryFieldsTest {
 
     @Test
-    @Feature("GraphQL API")
-    @Story("Получение полей категории через запрос ADS_CATEGORY_FIELDS")
-    @DisplayName("Проверка запроса ADS_CATEGORY_FIELDS из файлов запроса и переменных")
+    @Feature("Поля категории")
+    @Story("Получение полей категории через запрос getCategoryFields")
+    @DisplayName("Проверка запроса getCategoryFields из файлов запроса и переменных")
     @Description("Тест загружает GraphQL запрос из файла getCategoryFields.graphql и переменные из файла getCategoryFields.variables.json, " +
             "формирует JSON тело запроса, отправляет запрос и валидирует ответ, проверяя, что отсутствуют ошибки типа 'CategoryRead not found' " +
-            "и что структура ответа соответствует ожидаемой.")
+            "и что структура ответа соответствует ожидаемой."+
+            "покрывает задачу - https://app.clickup.com/t/86dvpfur1")
     public void testADSCategoryFields() {
         Allure.step("Загрузка GraphQL запроса из файла", () -> {
             // Загружаем текст запроса

@@ -3,6 +3,8 @@ package com.v2modules.tabylga.ui;
 import com.v2modules.tabylga.ui.pages.LoginPage;
 import com.v2modules.tabylga.ui.utils.Singleton;
 import io.qameta.allure.Allure;
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +14,7 @@ import org.openqa.selenium.WebDriver;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Epic("UI Тесты")
 public class LoginTest {
     private WebDriver driver;
     private LoginPage loginPage;
@@ -30,6 +33,7 @@ public class LoginTest {
 
     @Test
     @DisplayName("Успешный вход в систему с корректными учетными данными")
+    @Description("Покрывает задачу - https://app.clickup.com/t/86dvybx3d")
     public void testSuccessfulLogin() {
         loginPage.clickLoginPageButton();
         loginPage.enterUsername("996555444444");
