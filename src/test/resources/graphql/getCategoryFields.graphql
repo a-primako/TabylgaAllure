@@ -1,0 +1,39 @@
+query ADS_CATEGORY_FIELDS($categoryId: String!, $basedOn: [SelectedFieldsDto!]) {
+    getCategoryFields(categoryId: $categoryId, basedOn: $basedOn) {
+        id
+        categoryId
+        field {
+            id
+            name
+            code
+            values {
+                id
+                name
+                position
+                type
+                __typename
+                ... on FieldValueBoolean {
+                    valueBoolean
+                }
+                ... on FieldValueDate {
+                    valueDate
+                }
+                ... on FieldValueNumber {
+                    valueNumber
+                }
+                ... on FieldValueString {
+                    valueString
+                }
+            }
+            type
+            displayAs
+            required
+            multiple
+            isRange
+            urlType
+            urlPosition
+        }
+        position
+        isOnList
+    }
+}
