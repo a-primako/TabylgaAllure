@@ -15,8 +15,8 @@ import java.util.Map;
 public class GetCategoryFieldsTest {
 
     @Test
-    @Feature("Поля категории")
-    @Story("Получение полей категории через запрос getCategoryFields")
+    @Feature("Поля категории 'Техника для кухни'")
+    @Story("Получение полей категории 'Техника для кухни' через запрос getCategoryFields")
     @DisplayName("Проверка запроса getCategoryFields из файлов запроса и переменных")
     @Description("Тест загружает GraphQL запрос из файла getCategoryFields.graphql и переменные из файла getCategoryFields.variables.json, " +
             "формирует JSON тело запроса, отправляет запрос и валидирует ответ, проверяя, что отсутствуют ошибки типа 'CategoryRead not found' " +

@@ -59,9 +59,6 @@ public class ResponseValidator {
 
                 // Проверка вложенного объекта field
                 Map<String, Object> field = (Map<String, Object>) catField.get("field");
-                String fieldInfo = "Вложенный объект field: " + field;
-                System.out.println(fieldInfo);
-                Allure.addAttachment("Объект field", "application/json", field != null ? field.toString() : "null");
                 assertNotNull(field, "Объект field отсутствует в getCategoryFields");
                 String fieldBaseInfo = "Проверка field: id = " + field.get("id")
                         + ", name = " + field.get("name")
@@ -74,15 +71,12 @@ public class ResponseValidator {
 
                 // Проверка списка values внутри field
                 List<Map<String, Object>> values = (List<Map<String, Object>>) field.get("values");
-                String valuesInfo = "Список values (" + (values != null ? values.size() : "null") + " элементов): " + values;
-                System.out.println(valuesInfo);
-                Allure.addAttachment("Список values", "application/json", values != null ? values.toString() : "null");
                 assertNotNull(values, "Отсутствует список values в объекте field");
                 assertFalse(values.isEmpty(), "Список values в объекте field пуст");
 
                 // Проверка каждого элемента списка values
                 for (Map<String, Object> value : values) {
-                    String valueInfo = "Проверяем объект value: " + value;
+                    String valueInfo = "Проверяем объект value" + value;
                     System.out.println(valueInfo);
                     Allure.addAttachment("Объект value", "application/json", value.toString());
                     assertNotNull(value.get("id"), "Отсутствует id в объекте value");
@@ -92,46 +86,18 @@ public class ResponseValidator {
                     assertNotNull(value.get("__typename"), "Отсутствует __typename в объекте value");
 
                     String typename = (String) value.get("__typename");
-                    System.out.println("Проверяем __typename для value: " + typename);
-                    Allure.addAttachment("Значение __typename", "text/plain", typename);
                     if ("FieldValueBoolean".equals(typename)) {
-                        String boolValueInfo = "Проверяем valueBoolean: " + value.get("valueBoolean");
-                        System.out.println(boolValueInfo);
-                        Allure.addAttachment("valueBoolean", "text/plain", String.valueOf(value.get("valueBoolean")));
-                        assertNotNull(value.get("valueBoolean"),
-                                "Для FieldValueBoolean отсутствует valueBoolean");
+                        assertNotNull(value.get("valueBoolean"),"Для FieldValueBoolean отсутствует valueBoolean");
                     } else if ("FieldValueDate".equals(typename)) {
-                        String dateValueInfo = "Проверяем valueDate: " + value.get("valueDate");
-                        System.out.println(dateValueInfo);
-                        Allure.addAttachment("valueDate", "text/plain", String.valueOf(value.get("valueDate")));
-                        assertNotNull(value.get("valueDate"),
-                                "Для FieldValueDate отсутствует valueDate");
+                        assertNotNull(value.get("valueDate"), "Для FieldValueDate отсутствует valueDate");
                     } else if ("FieldValueNumber".equals(typename)) {
-                        String numberValueInfo = "Проверяем valueNumber: " + value.get("valueNumber");
-                        System.out.println(numberValueInfo);
-                        Allure.addAttachment("valueNumber", "text/plain", String.valueOf(value.get("valueNumber")));
-                        assertNotNull(value.get("valueNumber"),
-                                "Для FieldValueNumber отсутствует valueNumber");
+                        assertNotNull(value.get("valueNumber"), "Для FieldValueNumber отсутствует valueNumber");
                     } else if ("FieldValueString".equals(typename)) {
-                        String stringValueInfo = "Проверяем valueString: " + value.get("valueString");
-                        System.out.println(stringValueInfo);
-                        Allure.addAttachment("valueString", "text/plain", String.valueOf(value.get("valueString")));
-                        assertNotNull(value.get("valueString"),
-                                "Для FieldValueString отсутствует valueString");
+                        assertNotNull(value.get("valueString"), "Для FieldValueString отсутствует valueString");
                     }
                 }
 
                 // Дополнительные проверки объекта field
-                String additionalFieldInfo = "Дополнительные проверки объекта field:" +
-                        " type = " + field.get("type") +
-                        ", displayAs = " + field.get("displayAs") +
-                        ", required = " + field.get("required") +
-                        ", multiple = " + field.get("multiple") +
-                        ", isRange = " + field.get("isRange") +
-                        ", urlType = " + field.get("urlType") +
-                        ", urlPosition = " + field.get("urlPosition");
-                System.out.println(additionalFieldInfo);
-                Allure.addAttachment("Дополнительные поля field", "text/plain", additionalFieldInfo);
                 assertNotNull(field.get("type"), "Отсутствует type в объекте field");
                 assertNotNull(field.get("displayAs"), "Отсутствует displayAs в объекте field");
                 assertNotNull(field.get("required"), "Отсутствует required в объекте field");
