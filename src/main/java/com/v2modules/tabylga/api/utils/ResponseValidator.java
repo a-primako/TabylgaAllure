@@ -18,6 +18,110 @@ public class ResponseValidator {
         });
     }
 
+    public static void validateCategoryFields(Response response) {
+        Allure.step("Валидация ответа getCategoryFields", () -> {
+            // Проверка отсутствия ошибок в ответе
+            List<Map<String, Object>> errors = response.jsonPath().getList("errors");
+            if (errors != null && !errors.isEmpty()) {
+                System.out.println("Ошибки в ответе: " + errors);
+            } else {
+                System.out.println("Ошибок в ответе не обнаружено.");
+            }
+            assertTrue(errors == null || errors.isEmpty(),
+                    "Получены ошибки в ответе: " + errors);
+
+            // Извлекаем список объектов getCategoryFields
+            List<Map<String, Object>> categoryFields = response.jsonPath().getList("data.getCategoryFields");
+            System.out.println("Найдено объектов getCategoryFields: " +
+                    (categoryFields != null ? categoryFields.size() : "null"));
+            assertNotNull(categoryFields, "Отсутствует поле data.getCategoryFields");
+            assertFalse(categoryFields.isEmpty(), "Список getCategoryFields пуст");
+
+            // Для каждого объекта выполняем валидацию
+            for (Map<String, Object> catField : categoryFields) {
+                System.out.println("Проверяем объект getCategoryFields: " + catField);
+
+                // Базовая проверка полей категории
+                System.out.println("Проверка базовых полей: id = " + catField.get("id")
+                        + ", categoryId = " + catField.get("categoryId"));
+                assertNotNull(catField.get("id"), "Отсутствует id в объекте getCategoryFields");
+                assertNotNull(catField.get("categoryId"), "Отсутствует categoryId в объекте getCategoryFields");
+
+                // Проверка вложенного объекта field
+                Map<String, Object> field = (Map<String, Object>) catField.get("field");
+                System.out.println("Вложенный объект field: " + field);
+                assertNotNull(field, "Объект field отсутствует в getCategoryFields");
+                System.out.println("Проверка field: id = " + field.get("id")
+                        + ", name = " + field.get("name")
+                        + ", code = " + field.get("code"));
+                assertNotNull(field.get("id"), "Отсутствует id в объекте field");
+                assertNotNull(field.get("name"), "Отсутствует name в объекте field");
+                assertNotNull(field.get("code"), "Отсутствует code в объекте field");
+
+                // Проверка списка values внутри field
+                List<Map<String, Object>> values = (List<Map<String, Object>>) field.get("values");
+                System.out.println("Список values (" + (values != null ? values.size() : "null") + " элементов): " + values);
+                assertNotNull(values, "Отсутствует список values в объекте field");
+                assertFalse(values.isEmpty(), "Список values в объекте field пуст");
+
+                // Проверка каждого элемента списка values
+                for (Map<String, Object> value : values) {
+                    System.out.println("Проверяем объект value: " + value);
+                    assertNotNull(value.get("id"), "Отсутствует id в объекте value");
+                    assertNotNull(value.get("name"), "Отсутствует name в объекте value");
+                    assertNotNull(value.get("position"), "Отсутствует position в объекте value");
+                    assertNotNull(value.get("type"), "Отсутствует type в объекте value");
+                    assertNotNull(value.get("__typename"), "Отсутствует __typename в объекте value");
+
+                    String typename = (String) value.get("__typename");
+                    System.out.println("Проверяем __typename для value: " + typename);
+                    if ("FieldValueBoolean".equals(typename)) {
+                        System.out.println("Проверяем valueBoolean: " + value.get("valueBoolean"));
+                        assertNotNull(value.get("valueBoolean"),
+                                "Для FieldValueBoolean отсутствует valueBoolean");
+                    } else if ("FieldValueDate".equals(typename)) {
+                        System.out.println("Проверяем valueDate: " + value.get("valueDate"));
+                        assertNotNull(value.get("valueDate"),
+                                "Для FieldValueDate отсутствует valueDate");
+                    } else if ("FieldValueNumber".equals(typename)) {
+                        System.out.println("Проверяем valueNumber: " + value.get("valueNumber"));
+                        assertNotNull(value.get("valueNumber"),
+                                "Для FieldValueNumber отсутствует valueNumber");
+                    } else if ("FieldValueString".equals(typename)) {
+                        System.out.println("Проверяем valueString: " + value.get("valueString"));
+                        assertNotNull(value.get("valueString"),
+                                "Для FieldValueString отсутствует valueString");
+                    }
+                }
+
+                // Дополнительные проверки объекта field
+                System.out.println("Дополнительные проверки объекта field:"
+                        + " type = " + field.get("type")
+                        + ", displayAs = " + field.get("displayAs")
+                        + ", required = " + field.get("required")
+                        + ", multiple = " + field.get("multiple")
+                        + ", isRange = " + field.get("isRange")
+                        + ", urlType = " + field.get("urlType")
+                        + ", urlPosition = " + field.get("urlPosition"));
+                assertNotNull(field.get("type"), "Отсутствует type в объекте field");
+                assertNotNull(field.get("displayAs"), "Отсутствует displayAs в объекте field");
+                assertNotNull(field.get("required"), "Отсутствует required в объекте field");
+                assertNotNull(field.get("multiple"), "Отсутствует multiple в объекте field");
+                assertNotNull(field.get("isRange"), "Отсутствует isRange в объекте field");
+                assertNotNull(field.get("urlType"), "Отсутствует urlType в объекте field");
+                assertNotNull(field.get("urlPosition"), "Отсутствует urlPosition в объекте field");
+
+                // Проверка оставшихся полей объекта getCategoryFields
+                System.out.println("Проверка оставшихся полей getCategoryFields: position = "
+                        + catField.get("position") + ", isOnList = " + catField.get("isOnList"));
+                assertNotNull(catField.get("position"), "Отсутствует position в объекте getCategoryFields");
+                assertNotNull(catField.get("isOnList"), "Отсутствует isOnList в объекте getCategoryFields");
+                System.out.println("Проверка объекта getCategoryFields завершена для id: " + catField.get("id"));
+            }
+        });
+    }
+
+
     public static void validateCategories(Response response) {
         Allure.step("Проверка категорий", () -> {
             List<Map<String, Object>> categories = response.jsonPath().getList("data.getCategories");
