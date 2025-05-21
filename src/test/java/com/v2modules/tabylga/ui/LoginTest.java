@@ -36,7 +36,7 @@ public class LoginTest {
     @Description("Покрывает задачу - https://app.clickup.com/t/86dvybx3d")
     public void testSuccessfulLogin() {
         loginPage.clickLoginPageButton();
-        loginPage.enterUsername("996555444444");
+        loginPage.enterUsername("996555555555");
         loginPage.enterPassword("password");
         loginPage.clickLoginButton();
 
