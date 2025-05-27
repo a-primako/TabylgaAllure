@@ -22,7 +22,7 @@ public class LoginPage {
     private final By errorMessageLoginEmail = By.xpath("//p[contains(text(),'Поле должно быть действительным адресом электронной почты.')]");
     private final By errorMessagePassword = By.xpath("//p[contains(text(),'Слишком коротко (минимум 5 символов)')]");
     private final By errorMessageAccountNotFound = By.xpath("//div[contains(@class, 'MuiAlert-message') and contains(text(), 'Account not found.')]");
-    private final By errorMessageInvalidAccountCredentials = By.xpath("//div[contains(@class, 'MuiAlert-message') and text()='Invalid account credentials']");
+    private final By errorMessageInvalidAccountCredentials = By.xpath("//div[contains(text(), 'Invalid account credentials')]");
     private final By isUserLoggedIn = By.xpath("//a[contains(@class, 'MuiLink-root') and @href='/account/wallet']");
 
 

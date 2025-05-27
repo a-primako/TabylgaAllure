@@ -153,7 +153,7 @@ public class LoginTest {
     @DisplayName("Проверка ошибки при корректном логине и неверном пароле")
     public void testLoginWithValidLoginAndInvalidPassword() {
         loginPage.clickLoginPageButton();
-        loginPage.enterUsername("996555444444");
+        loginPage.enterUsername("996555555555");
         loginPage.enterPassword("invalid_password");
         loginPage.clickLoginButton();
 
