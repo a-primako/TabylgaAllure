@@ -8,6 +8,8 @@ import io.qameta.allure.Epic;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @Epic("UI Тесты")
 public class MainPageTest {
     private WebDriver driver;
@@ -28,19 +30,15 @@ public class MainPageTest {
     @DisplayName("Проверка счетчика значений категории 'Бизнес на Tabylga'")
     @Description("Покрывает задачу - https://app.clickup.com/t/86duzkpfy")
     public void testBusinessTabCounts() {
-        // 1. Нажимаем на бургер-меню
         mainPage.clickBurgerMenuButton();
 
-        // 2. Получаем значение счетчика из выпадающего меню и проверяем, что оно больше 0
         String menuCounterText = mainPage.getCounterMenuBusinessTabylga();
         int menuCounter = Integer.parseInt(menuCounterText.replaceAll("[^0-9]", ""));
         Allure.step("Значение счетчика в меню: " + menuCounter);
         Assertions.assertTrue(menuCounter > 0, "Счетчик в меню должен быть больше 0");
 
-        // 3. Нажимаем на таб "Бизнесы на Tabylga"
         mainPage.clickMenuBusinessTabylgaTab();
 
-        // 4. Считываем заголовок страницы и значение счетчика
         String pageTitle = mainPage.getTitleText();
         Allure.step("Заголовок страницы: " + pageTitle);
         Assertions.assertEquals("Бизнес-профили", pageTitle, "Неверный заголовок страницы");
@@ -51,8 +49,17 @@ public class MainPageTest {
         Assertions.assertTrue(pageCounter > 0, "Счетчик на странице должен быть больше 0");
 
         // 5. Сверяем, что значения счетчиков равны
-        Assertions.assertEquals(menuCounter, pageCounter,
-                "Счетчик в выпадающем меню и на странице не совпадают");
+        System.out.println("Счетчик профилей в меню: " + menuCounter);
+        System.out.println("Счетчик профилей на странице: " + pageCounter);
+        Allure.addAttachment("Счетчик профилей в меню", "text/plain", String.valueOf(menuCounter));
+        Allure.addAttachment("Счетчик профилей на странице", "text/plain", String.valueOf(pageCounter));
+
+        if (menuCounter == pageCounter) {
+            System.out.println("Значения счетчиков совпадают.");
+            Allure.addAttachment("Результат проверки", "text/plain", "Значения счетчиков совпадают.");
+        }
+
+        Assertions.assertEquals(menuCounter, pageCounter, "Счетчик в выпадающем меню и на странице не совпадают");
     }
 
     @AfterEach
