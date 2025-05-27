@@ -29,7 +29,7 @@ public class Singleton {
         // Настройка опций для Chrome
         ChromeOptions options = new ChromeOptions();
         // Режим без окна браузера (headless)
-        //options.addArguments("--headless=new");
+        options.addArguments("--headless=new");
         // Другие параметры для стабильной работы, особенно в CI
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
